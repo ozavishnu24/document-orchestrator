@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
+// USE ENV VARIABLE FOR CLOUD DEPLOYMENT, FALLBACK TO LOCALHOST
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 function App() {
   const [file, setFile] = useState(null);
   const [documents, setDocuments] = useState([]);
@@ -14,7 +17,7 @@ function App() {
 
   const fetchDocuments = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/documents');
+      const res = await axios.get(`${API_URL}/api/documents`);
       setDocuments(res.data);
     } catch (err) {
       console.error("Error fetching documents:", err);
@@ -30,7 +33,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      await axios.post('http://localhost:5000/api/upload', formData, {
+      await axios.post(`${API_URL}/api/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       fetchDocuments(); // Refresh list
@@ -46,7 +49,7 @@ function App() {
 
   const handleSend = async (id) => {
     try {
-      await axios.post(`http://localhost:5000/api/send/${id}`);
+      await axios.post(`${API_URL}/api/send/${id}`);
       alert("Email workflow triggered!");
       fetchDocuments();
     } catch (err) {
